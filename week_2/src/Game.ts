@@ -34,8 +34,8 @@ class Game {
         ]
 
         // all screens: uncomment to activate 
-        // this.start_screen();
-        this.level_screen();
+        this.start_screen();
+        // this.level_screen();
         // this.title_screen();
 
     }
@@ -56,18 +56,18 @@ class Game {
     }
 
     public writeAsteroidHeading(){
-        this.writeText(70, 'white', 'center', 'Asteroids', this.canvas.width / 2, this.canvas.height / 5);
+        this.writeTextToCanvas('Asteroids', 70, this.canvas.width / 2, this.canvas.height / 5);
     }
 
     public writeIntroText(){
-        this.writeText(30, 'white', 'center', 'Press play to start', this.canvas.width / 2, this.canvas.height / 3);
+        this.writeTextToCanvas('Press play to start', 30, this.canvas.width / 2, this.canvas.height / 3);
     }
 
     public writeStartButton(){
         let startButton = new Image();
         startButton.addEventListener('load', () => {
             this.ctx.drawImage(startButton, this.canvas.width / 2 - startButton.width /2, this.canvas.height / 1.3);
-            this.writeText(30, 'black', 'center', 'Play', this.canvas.width / 2, this.canvas.height / 1.3 + startButton.height / 1.3);
+            this.writeTextToCanvas('Play', 20, this.canvas.width / 2, this.canvas.height / 1.3 + startButton.height / 2, 'black', undefined, 'middle');
         });
         startButton.addEventListener( 'click', ()=> console.log('test'));
         startButton.src = './assets/images/SpaceShooterRedux/PNG/UI/buttonBlue.png';
@@ -105,7 +105,7 @@ class Game {
     }
 
     public drawYourScore(){
-        this.writeText(20, 'white', 'end', `${this.player} - Your Score: ${this.score}`, this.canvas.width * 0.99, this.canvas.height / 15);
+        this.writeTextToCanvas(`${this.player} - Your Score: ${this.score}`, 20, this.canvas.width * 0.99, this.canvas.height / 15, undefined, 'end');
     }
 
     public drawRandomAsteroids(){
@@ -139,23 +139,37 @@ class Game {
     }
 
     public writePlayerScore(){
-        this.writeText(70, 'white', 'center', `Your score is: ${this.score}`, this.canvas.width / 2, this.canvas.height / 5);
+        this.writeTextToCanvas(`Your score is: ${this.score}`, 70, this.canvas.width / 2, this.canvas.height / 5);
     }
 
     public writeHighScores(){
-        this.writeText(40, 'white', 'center', 'Highscores', this.canvas.width / 2, this.canvas.height / 3);
+        this.writeTextToCanvas('Highscores', 40, this.canvas.width / 2, this.canvas.height / 3);
         for (let index = 0; index < this.highscores.length; index++) {
-            this.writeText(20, 'white', 'center', `${index + 1}. ${this.highscores[index].playerName} - ${this.highscores[index].score}`, this.canvas.width / 2, this.canvas.height / 3 + (50 * (index + 1)));
+            this.writeTextToCanvas(`${index + 1}. ${this.highscores[index].playerName} - ${this.highscores[index].score}`, 20, this.canvas.width / 2, this.canvas.height / 3 + (50 * (index + 1)), 'white', 'center');
         }
     }
 
     //-------Generic canvas functions ----------------------------------
 
-    public writeText(size: number, style: string, align: CanvasTextAlign, textInput: string, x: number, y: number){
+    public writeTextToCanvas(textInput: string, size: number, x: number, y: number, style: string = 'white', align: CanvasTextAlign = 'center', baseline: CanvasTextBaseline = 'alphabetic'){
         this.ctx.font = `${size}px Minecraft`;
         this.ctx.fillStyle = style;
         this.ctx.textAlign = align;
+        this.ctx.textBaseline = baseline;
         this.ctx.fillText(textInput, x, y);        
+    }
+    
+    public writeImageToCanvas(
+        src: string, xCoordinate: number, yCoordinate: number, deltaX: number = 0, deltaY: number = 0, loops: number = 1) {
+        let element = document.createElement("img");
+        element.src = src;
+        for (let i = 0; i < loops; i++) {
+            element.addEventListener("load", () => {
+                xCoordinate += deltaX;
+                yCoordinate += deltaY;
+                this.ctx.drawImage(element, xCoordinate, yCoordinate);
+            });
+        }
     }
 
     /**
